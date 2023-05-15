@@ -103,6 +103,10 @@ do
 	sudo mkdir /home/shared/${accounts[$i]}
 	sudo chown ${accounts[$i]}:${accounts[$i]} /home/shared/${accounts[$i]}
 	
+	sudo touch /home/${accounts[$i]}/retablir_sauvegarde.sh
+	sudo chown ${accounts[$i]} /home/${accounts[$i]}/retablir_sauvegarde.sh
+	sudo chmod 500 /home/${accounts[$i]}/retablir_sauvegarde.sh
+	
 	ssh asauni25@10.30.48.100 "mail --subject \"[Confidentiel] Mot de passe nouveau compte entreprise\" --exec \"set sendmail=smtp://$mail_fit:$password_fit;@$smtp_server\" --append \"From:$mail_address\" ${mails[$i]} <<< \"Bonjour,
 
 Voici votre nom d'utilisateur : ${accounts[$i]}
