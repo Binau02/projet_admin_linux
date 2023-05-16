@@ -110,6 +110,7 @@ do
 	ssh asauni25@10.30.48.100 "mail --subject \"[Confidentiel] Mot de passe nouveau compte entreprise\" --exec \"set sendmail=smtp://$mail_fit:$password_fit;@$smtp_server\" --append \"From:$mail_address\" ${mails[$i]} <<< \"Bonjour,
 
 Voici votre nom d'utilisateur : ${accounts[$i]}
+
 Voici votre mot de passe : ${passwords[$i]}
 
 Lors de votre première connexion, il vous sera demmandé ce mot de passe, et il vous sera ensuite demander de le changer pour un mot de passe personnel. Veillez à ne jamais communiquer ce mot de passe, ainsi que celui que vous allez créer, à quiconque. Veilez à choisir un mot de passe fort (Plus de 8 caractères, dont : majuscules, minuscules, chiffres, caractères spéciaux).
@@ -122,7 +123,7 @@ done
 sudo mkdir /home/saves
 
 $(sudo crontab -l) > cron_temp
-echo "0 23 * * 1-5 .$(pwd)/save_files.sh" >> cron_temp
+echo "0 23 * * 1-5 .$(pwd)/save_files.sh $(pwd)/accounts.csv" >> cron_temp
 sudo crontab cron_temp
 rm cron_temp
 

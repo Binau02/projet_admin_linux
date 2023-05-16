@@ -36,3 +36,12 @@ do
 done
 
 echo "accounts deleted"
+
+sudo crontab -r
+
+echo "crontab removed"
+
+sudo rm -rf /home/saves
+sudo rm -rf /home/shared
+
+echo "/home/saves and /home/shared deleted"

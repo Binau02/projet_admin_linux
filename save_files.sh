@@ -13,8 +13,8 @@ tr -d " " < temp2.csv > temp.csv
 while IFS=";", read -r name surname mail password
 do
 	account=("${name:0:1}$surname")
-	tar zcvf save_$account.tgz /home/$account/a_sauver
-	scp save_$account.tgz asauni25@10.30.48.100:/home/saves
+	tar zcvf save_$account.tgz /home/$account/a_sauver/
+	scp save_$account.tgz asauni25@10.30.48.100:/home/saves/
 	rm save_$account.tgz
 done < temp.csv
 
