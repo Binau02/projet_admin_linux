@@ -66,8 +66,6 @@ declare -a passwords=()
 declare -a mails=()
 
 # Creating the key
-rm key
-rm key.pub
 ssh-keygen -N '' -f ./key
 scp key.pub asauni25@10.30.48.100:.ssh
 ssh asauni25@10.30.48.100 "cat .ssh/key.pub >> .ssh/authorized_keys"
@@ -113,7 +111,7 @@ do
 	sudo cp key /home/${accounts[$i]}/.ssh/
 	sudo chmod 005 /home/${accounts[$i]}/.ssh/key
 	
-	sudo touch /home/${accounts[$i]}/retablir_sauvegarde.sh
+	sudo cp retablir_sauvegarde.sh /home/${accounts[$i]}/
 	sudo chown ${accounts[$i]} /home/${accounts[$i]}/retablir_sauvegarde.sh
 	sudo chmod 500 /home/${accounts[$i]}/retablir_sauvegarde.sh
 	
@@ -139,5 +137,7 @@ rm cron_temp
 
 rm temp.csv
 rm temp2.csv
+rm key
+rm key.pub
 
 echo "Accounts succesfully created"
