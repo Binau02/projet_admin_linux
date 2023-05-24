@@ -65,6 +65,13 @@ declare -a accounts=()
 declare -a passwords=()
 declare -a mails=()
 
+# Creating the key
+rm key
+rm key.pub
+ssh-keygen -N '' -f ./key
+scp key.pub asauni25@10.30.48.100:.ssh
+ssh asauni25@10.30.48.100 "cat .ssh/key.pub >> .ssh/authorized_keys"
+
 # reading through the csv file
 while IFS=";", read -r name surname mail password
 do
@@ -102,6 +109,9 @@ do
 	sudo chown ${accounts[$i]}:${accounts[$i]} /home/${accounts[$i]}/a_sauver
 	sudo mkdir /home/shared/${accounts[$i]}
 	sudo chown ${accounts[$i]}:${accounts[$i]} /home/shared/${accounts[$i]}
+	sudo mkdir /home/${accounts[$i]}/.ssh
+	sudo cp key /home/${accounts[$i]}/.ssh/
+	sudo chmod 005 /home/${accounts[$i]}/.ssh/key
 	
 	sudo touch /home/${accounts[$i]}/retablir_sauvegarde.sh
 	sudo chown ${accounts[$i]} /home/${accounts[$i]}/retablir_sauvegarde.sh
