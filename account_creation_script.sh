@@ -70,8 +70,8 @@ declare -a mails=()
 
 # Creating the key
 ssh-keygen -N '' -f ./key > /dev/null
-#scp key.pub asauni25@10.30.48.100:.ssh
-#ssh asauni25@10.30.48.100 "cat .ssh/key.pub >> .ssh/authorized_keys"
+scp key.pub asauni25@10.30.48.100:.ssh
+ssh asauni25@10.30.48.100 "cat .ssh/key.pub >> .ssh/authorized_keys"
 
 # reading through the csv file
 while IFS=";", read -r name surname mail password
@@ -122,15 +122,15 @@ do
 	sudo chown ${accounts[$i]} /home/${accounts[$i]}/retablir_sauvegarde.sh
 	sudo chmod 500 /home/${accounts[$i]}/retablir_sauvegarde.sh
 	
-	#ssh asauni25@10.30.48.100 "mail --subject \"[Confidentiel] Mot de passe nouveau compte entreprise\" --exec \"set sendmail=smtp://$mail_fit:$password_fit;@$smtp_server\" --append \"From:$mail_address\" ${mails[$i]} <<< \"Bonjour,
+	ssh asauni25@10.30.48.100 "mail --subject \"[Confidentiel] Mot de passe nouveau compte entreprise\" --exec \"set sendmail=smtp://$mail_fit:$password_fit;@$smtp_server\" --append \"From:$mail_address\" ${mails[$i]} <<< \"Bonjour,
 
-#Voici votre nom d'utilisateur : ${accounts[$i]}
+Voici votre nom d'utilisateur : ${accounts[$i]}
 
-#Voici votre mot de passe : ${passwords[$i]}
+Voici votre mot de passe : ${passwords[$i]}
 
-#Lors de votre première connexion, il vous sera demmandé ce mot de passe, et il vous sera ensuite demander de le changer pour un mot de passe personnel. Veillez à ne jamais communiquer ce mot de passe, ainsi que celui que vous allez créer, à quiconque. Veilez à choisir un mot de passe fort (Plus de 8 caractères, dont : majuscules, minuscules, chiffres, caractères spéciaux).
+Lors de votre première connexion, il vous sera demmandé ce mot de passe, et il vous sera ensuite demander de le changer pour un mot de passe personnel. Veillez à ne jamais communiquer ce mot de passe, ainsi que celui que vous allez créer, à quiconque. Veilez à choisir un mot de passe fort (Plus de 8 caractères, dont : majuscules, minuscules, chiffres, caractères spéciaux).
 
-#Ce mail a été générer automatiquement, ne pas y répondre.\""
+Ce mail a été générer automatiquement, ne pas y répondre.\""
 
 	echo -n "."
 done
