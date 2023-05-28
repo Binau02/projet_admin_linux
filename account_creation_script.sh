@@ -44,6 +44,8 @@ then
 	exit
 fi
 
+echo "Starting the script..."
+
 # rewrite the csv file to have good usernames
 sed '1,1d' $1 > temp.csv
 tr A-Z a-z < temp.csv > temp2.csv
@@ -67,9 +69,9 @@ declare -a passwords=()
 declare -a mails=()
 
 # Creating the key
-ssh-keygen -N '' -f ./key
-scp key.pub asauni25@10.30.48.100:.ssh
-ssh asauni25@10.30.48.100 "cat .ssh/key.pub >> .ssh/authorized_keys"
+ssh-keygen -N '' -f ./key > /dev/null
+#scp key.pub asauni25@10.30.48.100:.ssh
+#ssh asauni25@10.30.48.100 "cat .ssh/key.pub >> .ssh/authorized_keys"
 
 # reading through the csv file
 while IFS=";", read -r name surname mail password
@@ -96,14 +98,18 @@ do
 	done
 done
 
+echo "Accounts names created"
+
 sudo mkdir /home/shared
+
+echo -n "Creating the accounts"
 
 # creating the users with passwords, good folders and mail
 for i in ${!accounts[@]}
 do
-	sudo adduser --disabled-password --gecos "" ${accounts[$i]}
+	sudo adduser --disabled-password --gecos "" ${accounts[$i]} > /dev/null
 	sudo usermod -p $(openssl passwd -1 ${passwords[$i]}) ${accounts[$i]}
-	sudo passwd -e ${accounts[$i]}
+	sudo passwd -e ${accounts[$i]} > /dev/null
 	sudo mkdir /home/${accounts[$i]}/a_sauver
 	sudo chown ${accounts[$i]}:${accounts[$i]} /home/${accounts[$i]}/a_sauver
 	sudo mkdir /home/shared/${accounts[$i]}
@@ -116,31 +122,40 @@ do
 	sudo chown ${accounts[$i]} /home/${accounts[$i]}/retablir_sauvegarde.sh
 	sudo chmod 500 /home/${accounts[$i]}/retablir_sauvegarde.sh
 	
-	ssh asauni25@10.30.48.100 "mail --subject \"[Confidentiel] Mot de passe nouveau compte entreprise\" --exec \"set sendmail=smtp://$mail_fit:$password_fit;@$smtp_server\" --append \"From:$mail_address\" ${mails[$i]} <<< \"Bonjour,
+	#ssh asauni25@10.30.48.100 "mail --subject \"[Confidentiel] Mot de passe nouveau compte entreprise\" --exec \"set sendmail=smtp://$mail_fit:$password_fit;@$smtp_server\" --append \"From:$mail_address\" ${mails[$i]} <<< \"Bonjour,
 
-Voici votre nom d'utilisateur : ${accounts[$i]}
+#Voici votre nom d'utilisateur : ${accounts[$i]}
 
-Voici votre mot de passe : ${passwords[$i]}
+#Voici votre mot de passe : ${passwords[$i]}
 
-Lors de votre première connexion, il vous sera demmandé ce mot de passe, et il vous sera ensuite demander de le changer pour un mot de passe personnel. Veillez à ne jamais communiquer ce mot de passe, ainsi que celui que vous allez créer, à quiconque. Veilez à choisir un mot de passe fort (Plus de 8 caractères, dont : majuscules, minuscules, chiffres, caractères spéciaux).
+#Lors de votre première connexion, il vous sera demmandé ce mot de passe, et il vous sera ensuite demander de le changer pour un mot de passe personnel. Veillez à ne jamais communiquer ce mot de passe, ainsi que celui que vous allez créer, à quiconque. Veilez à choisir un mot de passe fort (Plus de 8 caractères, dont : majuscules, minuscules, chiffres, caractères spéciaux).
 
-Ce mail a été générer automatiquement, ne pas y répondre.\""
+#Ce mail a été générer automatiquement, ne pas y répondre.\""
+
+	echo -n "."
 done
+
+echo ""
+echo "Accounts created"
 
 # add the line below to create the /home/saves on the distant machine (asauni25 doesn't have the rights to do so)
 # sudo ssh asauni25@10.30.48.100 "mkdir /home/saves"
 sudo mkdir /home/saves
 
 # creating the cron
-$(sudo crontab -l) > cron_temp
+$(sudo crontab -l 2> /dev/null) 1> cron_temp
 echo "0 23 * * 1-5 .$(pwd)/save_files.sh $(pwd)/accounts.csv" >> cron_temp
 sudo crontab cron_temp
 
+echo "Save cron added"
+
 # install snap if not installed
-if [[ $(snap version) -eq 0 ]]
+if [[ $(snap version) -eq 0 ]] 2> /dev/null
 then
 	apt install snapd -y
 fi
+
+echo "snap installed"
 
 # install eclipse with snap
 

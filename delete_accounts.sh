@@ -45,3 +45,6 @@ sudo rm -rf /home/saves
 sudo rm -rf /home/shared
 
 echo "/home/saves and /home/shared deleted"
+
+rm key
+rm key.pub
