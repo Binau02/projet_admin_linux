@@ -3,6 +3,7 @@
 # $3 = mail
 # $4 = password
 
+# verifying parameters
 if [[ $1 -eq 0 ]] 2> /dev/null
 then
 	echo -e "\033[31mArgument error :\033[0m"
@@ -48,7 +49,7 @@ sed '1,1d' $1 > temp.csv
 tr A-Z a-z < temp.csv > temp2.csv
 tr -d " " < temp2.csv > temp.csv
 
-# fitting user data for the mail
+# fitting user data for the mail (escaping '\ $~&@!')
 smtp_server=$2
 mail_address=$3
 mail_fit=$(echo $3 | sed 's/@/%40/g')
@@ -60,7 +61,7 @@ password_fit=$(echo $password_fit | sed 's/\&/\\\&/g')
 password_fit=$(echo $password_fit | sed 's/\@/\\\@/g')
 password_fit=$(echo $password_fit | sed 's/\!/\\\!/g')
 
-
+# creating arrays for the account creation
 declare -a accounts=()
 declare -a passwords=()
 declare -a mails=()
@@ -78,7 +79,7 @@ do
 	mails+=($mail)
 done < temp.csv
 
-# n the nimber of users
+# n the number of users
 n=${#accounts[@]}
 
 # adding numbers after the username if similar usernames
@@ -97,7 +98,7 @@ done
 
 sudo mkdir /home/shared
 
-# creating the users with passwords
+# creating the users with passwords, good folders and mail
 for i in ${!accounts[@]}
 do
 	sudo adduser --disabled-password --gecos "" ${accounts[$i]}
@@ -130,11 +131,21 @@ done
 # sudo ssh asauni25@10.30.48.100 "mkdir /home/saves"
 sudo mkdir /home/saves
 
+# creating the cron
 $(sudo crontab -l) > cron_temp
 echo "0 23 * * 1-5 .$(pwd)/save_files.sh $(pwd)/accounts.csv" >> cron_temp
 sudo crontab cron_temp
-rm cron_temp
 
+# install snap if not installed
+if [[ $(snap version) -eq 0 ]]
+then
+	apt install snapd -y
+fi
+
+# install eclipse with snap
+
+# removing temp files
+rm cron_temp
 rm temp.csv
 rm temp2.csv
 rm key
